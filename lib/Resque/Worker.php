@@ -251,6 +251,14 @@ class Resque_Worker
                 if ($exitStatus !== 0) {
                     $job->fail(new Resque_Job_DirtyExitException('Job exited with exit code ' . $exitStatus));
                 }
+				else
+				{
+					if (in_array($job->getStatus(), array(Resque_Job_Status::STATUS_WAITING, Resque_Job_Status::STATUS_RUNNING)))
+					{
+						$job->updateStatus(Resque_Job_Status::STATUS_COMPLETE);
+						$this->log('done ' . $job);
+					}
+				}
             }
 
             $this->child = null;
